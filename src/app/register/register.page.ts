@@ -23,10 +23,6 @@ export class RegisterPage implements OnInit {
       nombre: ['', Validators.required],
       apellidoPaterno: ['', Validators.required],
       apellidoMaterno: ['', Validators.required],
-      direccion: ['', Validators.required],
-      comuna: ['', Validators.required],
-      region: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(4)]]
     });
   }

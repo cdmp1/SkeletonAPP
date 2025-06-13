@@ -1,0 +1,56 @@
+<ion-content>
+  <h2 style="text-align: center; margin-top: 80px; margin-bottom: 60px;">CERTIFICACIONES</h2>
+
+  <div style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+    <div *ngIf="certificados.length === 0" style="text-align: center; color: gray;">
+      Aún no has agregado ninguna certificación.
+    </div>
+
+    <div *ngIf="certificados.length > 0">
+      <h4 style="margin-top: 30px;">Certificaciones guardadas:</h4>
+      <mat-list>
+        <mat-list-item *ngFor="let c of certificados">
+          <mat-icon matListIcon>verified</mat-icon>
+          <h4 matLine>{{ c.nombre }}</h4>
+          <p matLine>
+            Obtenido el {{ c.fechaObtencion | date: 'yyyy-MM-dd' }}
+            <span *ngIf="c.vencimiento"> - Vence el {{ c.fechaVencimiento | date: 'yyyy-MM-dd' }}</span>
+          </p>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <h4 style="text-align: center; margin-top: 60px;"> AGREGAR <mat-icon>post_add</mat-icon> </h4> 
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Nombre del certificado</mat-label>
+      <input matInput [(ngModel)]="cert.nombre" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Fecha de obtención</mat-label>
+      <input matInput [matDatepicker]="picker1" [(ngModel)]="cert.fechaObtencion">
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="cert.vencimiento">
+      ¿Tiene vencimiento?
+    </mat-checkbox>
+
+    <mat-form-field *ngIf="cert.vencimiento" appearance="fill" style="width: 100%;">
+      <mat-label>Fecha de vencimiento</mat-label>
+      <input matInput [matDatepicker]="picker2" [(ngModel)]="cert.fechaVencimiento">
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+
+    <div style="display: flex; justify-content: center;">
+      <ion-button expand="block" color="primary" (click)="guardar()" style="width: 200px;">Guardar</ion-button>
+    </div>
+
+  </div>
+</ion-content>

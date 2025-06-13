@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 
@@ -9,20 +9,11 @@ import { AlertController } from '@ionic/angular';
   standalone: false,
 })
 export class HomePage implements OnInit {
+  segmentValue = 'mis-datos';
 
-  // Datos recibidos del Login
   usuario: string = '';
   password: string = '';
 
-  // Datos del formulario adicional
-  nombre: string = '';
-  apellido: string = '';
-  nivelEducacion: string = '';
-  fechaNacimiento: Date | null = null;
-
-  // Referencias a los inputs para animación
-  @ViewChild('inputNombre') inputNombre!: ElementRef;
-  @ViewChild('inputApellido') inputApellido!: ElementRef;
 
   constructor(
     private router: Router,
@@ -41,54 +32,25 @@ export class HomePage implements OnInit {
     }
   }
 
-  limpiarCampos() {
-    this.nombre = '';
-    this.apellido = '';
-    this.nivelEducacion = '';
-    this.fechaNacimiento = null;
 
-    this.animarInput(this.inputNombre);
-    this.animarInput(this.inputApellido);
-  }
-
-  animarInput(input: ElementRef) {
-    const nativeElement = input.nativeElement;
-    nativeElement.classList.add('shake');
-
-    setTimeout(() => {
-      nativeElement.classList.remove('shake');
-    }, 1000);
-  }
-
-  async mostrarDatos() {
+  async logOut() {
     const alert = await this.alertCtrl.create({
-      header: 'Usuario',
-      message: `Su nombre es ${this.nombre} ${this.apellido}`,
-      buttons: ['Listo']
+      header: 'Cerrar sesión',
+      message: '¿Estás seguro que quieres cerrar sesión?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Sí',
+          handler: () => {
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
     });
-
     await alert.present();
   }
-
-
-async logOut() {
-  const alert = await this.alertCtrl.create({
-    header: 'Cerrar sesión',
-    message: '¿Estás seguro que quieres cerrar sesión?',
-    buttons: [
-      {
-        text: 'Cancelar',
-        role: 'cancel'
-      },
-      {
-        text: 'Sí',
-        handler: () => {
-          this.router.navigate(['/login']);
-        }
-      }
-    ]
-  });
-  await alert.present();
-}
 
 }

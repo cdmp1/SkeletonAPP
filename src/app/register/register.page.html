@@ -44,30 +44,6 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Dirección</mat-label>
-        <input matInput formControlName="direccion" />
-        <mat-error *ngIf="registerForm.get('direccion')?.hasError('required')">
-          La dirección es obligatoria
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Comuna</mat-label>
-        <input matInput formControlName="comuna" />
-        <mat-error *ngIf="registerForm.get('comuna')?.hasError('required')">
-          La comuna es obligatoria
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label>Región</mat-label>
-        <input matInput formControlName="region" />
-        <mat-error *ngIf="registerForm.get('region')?.hasError('required')">
-          La región es obligatoria
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" type="email" />
         <mat-error *ngIf="registerForm.get('email')?.hasError('required')">
