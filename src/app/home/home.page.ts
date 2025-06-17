@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { DbTaskService } from '../services/db-task.service';
 
 @Component({
   selector: 'app-home',
@@ -10,28 +11,22 @@ import { AlertController } from '@ionic/angular';
 })
 export class HomePage implements OnInit {
   segmentValue = 'mis-datos';
-
-  usuario: string = '';
-  password: string = '';
-
+  usuario: string | null = null;
 
   constructor(
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private dbTask: DbTaskService
   ) { }
 
-  ngOnInit() {
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras.state;
+  async ngOnInit() {
+    this.usuario = await this.dbTask.getUsuarioActivo();
 
-    if (state) {
-      this.usuario = state['usuario'];
-      this.password = state['password'];
-    } else {
-      console.warn('No se recibieron datos desde Login');
+    if (!this.usuario) {
+      console.warn('No hay usuario activo');
+      this.router.navigate(['/login']);
     }
   }
-
 
   async logOut() {
     const alert = await this.alertCtrl.create({
@@ -44,8 +39,13 @@ export class HomePage implements OnInit {
         },
         {
           text: 'Sí',
-          handler: () => {
-            this.router.navigate(['/login']);
+          handler: async () => {
+            if (this.usuario) {
+              await this.dbTask.cerrarSesion(this.usuario);
+              this.router.navigate(['/login']);
+            } else {
+              console.warn('No hay usuario activo para cerrar sesión');
+            }
           }
         }
       ]

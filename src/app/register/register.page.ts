@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { DbTaskService } from '../services/db-task.service';
 
 
 @Component({
@@ -15,7 +16,12 @@ export class RegisterPage implements OnInit {
   registerForm!: FormGroup;
   cargando: boolean = false;
 
-  constructor(private fb: FormBuilder, private router: Router, private toastController: ToastController) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private toastController: ToastController,
+    private dbTask: DbTaskService
+  ) {}
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -31,11 +37,26 @@ export class RegisterPage implements OnInit {
     if (this.registerForm.valid) {
       this.cargando = true;
 
-      setTimeout(async () => {
-        console.log('Datos del formulario:', this.registerForm.value);
-        this.cargando = false;
+      const { usuario, password } = this.registerForm.value;
+      const passwordNum = parseInt(password, 10);
 
-        // Mostrar mensaje
+      const existe = await this.dbTask.validarUsuario(usuario, passwordNum);
+      if (existe) {
+        this.cargando = false;
+        const toast = await this.toastController.create({
+          message: 'El usuario ya existe.',
+          duration: 2000,
+          color: 'danger',
+          position: 'top'
+        });
+        await toast.present();
+        return;
+      }
+
+      try {
+        // Insertar usuario sin activar la sesión
+        await this.dbTask.insertarUsuario(usuario, passwordNum);
+
         const toast = await this.toastController.create({
           message: '¡Usuario creado exitosamente!',
           duration: 2000,
@@ -44,13 +65,24 @@ export class RegisterPage implements OnInit {
         });
 
         await toast.present();
-
-        // Redirigir a Login
         toast.onDidDismiss().then(() => {
           this.router.navigate(['/login']);
         });
 
-      }, 2000);
+      } catch (error) {
+        console.error('Error registrando:', error);
+        this.cargando = false;
+
+        const toast = await this.toastController.create({
+          message: 'Error al registrar usuario.',
+          duration: 2000,
+          color: 'danger',
+          position: 'top'
+        });
+
+        await toast.present();
+      }
+
     } else {
       console.log('Formulario inválido');
     }
